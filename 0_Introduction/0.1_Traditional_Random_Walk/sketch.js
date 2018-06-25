@@ -15,15 +15,6 @@ function draw() {
     walker.move();
     walker.display();
   }
-
-  if(timer == 0){
-    console.log(frameRate());
-    timer++;
-  }else if(timer > 60){
-    timer = 0;
-  }else{
-    timer++;
-  }
 }
 
 class Walker{
