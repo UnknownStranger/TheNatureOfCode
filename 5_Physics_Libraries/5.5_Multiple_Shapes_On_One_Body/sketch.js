@@ -25,6 +25,11 @@ function draw() {
   rectMode(CENTER);
   for (const shape of shapes) {
     shape.display();
+    if (shape.circle.position.x > width || shape.circle.position.x < 0 || shape.circle.position.y > height || shape.circle.position.y < 0) {
+      Matter.Composite.remove(engine.world, shape);
+      let i = shapes.indexOf(shape);
+      shapes.splice(i, 1);
+    }
   }
   beginShape();
   for (const v of ground.vertices) {
@@ -46,7 +51,9 @@ class Shape {
     this.headSize = 10;
     this.rect = Bodies.rectangle(this.position.x, this.position.y, this.w, this.h);
     this.circle = Bodies.circle(this.position.x, (this.position.y - this.headSize - (this.h / 2)), this.headSize);
-    this.compoundBody = Body.create({parts: [this.rect, this.circle]});
+    this.compoundBody = Body.create({
+      parts: [this.rect, this.circle]
+    });
     World.add(engine.world, [this.compoundBody]);
   }
 
@@ -55,8 +62,8 @@ class Shape {
     this.drawBody();
     this.drawHead();
   }
-  
-  drawBody(){
+
+  drawBody() {
     beginShape();
     for (const v of this.rect.vertices) {
       vertex(v.x, v.y);
@@ -64,8 +71,8 @@ class Shape {
     vertex(this.rect.vertices[0].x, this.rect.vertices[0].y)
     endShape();
   }
-  
-  drawHead(){
+
+  drawHead() {
     beginShape();
     for (const v of this.circle.vertices) {
       vertex(v.x, v.y);

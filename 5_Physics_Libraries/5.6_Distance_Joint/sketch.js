@@ -10,7 +10,7 @@ function setup() {
   createCanvas(800, 800);
   engine = Engine.create();
   Engine.run(engine);
-  pairs.push(new Pair(createVector(width / 2, 0)));
+  pairs.push(new Pair(createVector(width / 2, 50)));
   ground = Bodies.rectangle(width / 2, height, width, 50, {
     isStatic: true
   });
@@ -33,6 +33,11 @@ function draw() {
 
   for (const p of pairs) {
     p.display();
+    if (p.particleA.body.position.x > width || p.particleA.body.position.x < 0 || p.particleA.body.position.y > height || p.particleA.body.position.y < 0) {
+      Matter.Composite.remove(engine.world, p);
+      let i = pairs.indexOf(p);
+      pairs.splice(i, 1);
+    }
   }
 }
 
@@ -55,7 +60,7 @@ class Pair {
 
   }
 
-  display(){
+  display() {
     stroke(0, 255, 0);
     let refA = this.particleA.body;
     let refB = this.particleB.body;
@@ -66,8 +71,8 @@ class Pair {
 
 }
 
-class Particle{
-  constructor(p){
+class Particle {
+  constructor(p) {
     this.position = p.copy();
     this.radius = 10;
     this.body = Bodies.circle(this.position.x, this.position.y, this.radius);

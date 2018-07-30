@@ -1,17 +1,17 @@
 let Engine = Matter.Engine,
-    World = Matter.World,
-    Bodies = Matter.Bodies,
-    engine,
-    boxes = [],
-    boundries = [];
+  World = Matter.World,
+  Bodies = Matter.Bodies,
+  engine,
+  boxes = [],
+  boundries = [];
 
 function setup() {
   createCanvas(800, 800);
-  engine = Engine.create(); 
+  engine = Engine.create();
   Engine.run(engine);
-  boundries.push(new Boundry(createVector(width/4, height)));
-  boundries.push(new Boundry(createVector(width/4 * 3, height/2)));
-  boxes.push(new Box(createVector(width/2, height/2)));
+  boundries.push(new Boundry(createVector(width / 4, height)));
+  boundries.push(new Boundry(createVector(width / 4 * 3, height / 2)));
+  boxes.push(new Box(createVector(width / 2, height / 2)));
 }
 
 function draw() {
@@ -22,44 +22,55 @@ function draw() {
   rectMode(CENTER);
   for (const b of boxes) {
     b.display();
+    b.deleteOffScreen();
   }
   for (const b of boundries) {
     b.display();
   }
 }
 
-function mouseDragged(){
+function mouseDragged() {
   boxes.push(new Box(createVector(mouseX, mouseY)));
 }
 
-class Boundry{
-  constructor(p){
+class Boundry {
+  constructor(p) {
     this.position = p.copy();
     this.w = 10;
-    this.h = width/2;
-    this.rect = Bodies.rectangle(this.position.x, this.position.y, width/2, 10, { isStatic: true });
+    this.h = width / 2;
+    this.rect = Bodies.rectangle(this.position.x, this.position.y, width / 2, 10, {
+      isStatic: true
+    });
     World.add(engine.world, this.rect);
   }
 
-  display(){
+  display() {
     rect(this.position.x, this.position.y, this.h, this.w);
   }
 }
 
-class Box{
-  constructor(p){
+class Box {
+  constructor(p) {
     this.position = p.copy();
     this.h = random(5, 50);
     this.w = random(5, 50);
-    this.rect =  Bodies.rectangle(this.position.x, this.position.y, this.h, this.w);
+    this.rect = Bodies.rectangle(this.position.x, this.position.y, this.h, this.w);
     World.add(engine.world, this.rect);
   }
 
-  display(){
+  display() {
     push();
     translate(this.rect.position.x, this.rect.position.y);
     rotate(this.rect.angle);
     rect(0, 0, this.h, this.w);
     pop();
+  }
+
+  deleteOffScreen() {
+    if (this.rect.position.x > width || this.rect.position.x < 0 || this.rect.position.y > height || this.rect.position.y < 0) {
+      Matter.Composite.remove(engine.world, this);
+      let i = boxes.indexOf(this);
+      boxes.splice(i, 1);
+    }
   }
 }

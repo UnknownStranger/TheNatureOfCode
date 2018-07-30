@@ -35,6 +35,11 @@ function draw() {
   rectMode(CENTER);
   for (const circle of circles) {
     ellipse(circle.position.x, circle.position.y, circle.circleRadius * 2);
+    if (circle.position.x > width || circle.position.x < 0 || circle.position.y > height || circle.position.y < 0) {
+      Matter.Composite.remove(engine.world, circle);
+      let i = circles.indexOf(circle);
+      circles.splice(i, 1);
+    }
   }
   beginShape();
   for (const v of ground.vertices) {
